@@ -52,5 +52,8 @@ export default {
     const avatarFile = avatarsFileList.find((file) => file.includes(id) && file.endsWith("66.0.png"));
     if (avatarFile)
       return `data:image/png;base64,${fs.readFileSync(`data/avatars/${avatarFile}`, "base64")}`;
+  },
+  getAvatarFileNameById(id: string): string {
+    return  avatarsFileList.find((file) => file.includes(id) && file.endsWith("66.0.png"));
   }
 }

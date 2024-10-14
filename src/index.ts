@@ -10,4 +10,4 @@ setGlobalFormat(Format.Pretty)
 mitm.start()
 mqtt.publishAutoDiscoveryBase()
 
-cron.schedule("*/10 * * * *", bluebubbles.requestRefreshLocations)
+cron.schedule("*/20 * * * *", bluebubbles.requestRefreshLocations)

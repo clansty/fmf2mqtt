@@ -44,10 +44,16 @@ export default {
       json_attributes_topic: `${process.env.MQTT_ID}/${id}`,
       unique_id: `${process.env.MQTT_ID}_${id}`,
       entity_picture: pictureUrl,
+      state_topic: `${process.env.MQTT_ID}/${id}/state`,
+      payload_home: '_$!<home>!$_',
+      device: {
+        identifiers: `FMF_${process.env.MQTT_ID}`,
+        name: "Find My Friends",
+      }
     };
     client.publish(topic, JSON.stringify(payload), {retain: true});
   },
-  publishDeviceTrackerState(notSanitizedId: string, lat: number, lon: number, altitude: number, accuracy: number, locationName: string, isInaccurate: boolean, updateTimestamp: number, label: string, address: string) {
+  publishDeviceTrackerState(notSanitizedId: string, lat: number, lon: number, altitude: number, accuracy: number, locationName: string, isInaccurate: boolean, updateTimestamp: number, label: string, address: string, avatarUrl?: string) {
     const id = sanitizeId(notSanitizedId);
     const topic = `${process.env.MQTT_ID}/${id}`;
     const payload = {
@@ -59,10 +65,13 @@ export default {
       inaccurate: isInaccurate,
       timestamp: updateTimestamp,
       time: new Date(updateTimestamp).toLocaleString(),
-      label,
+      label2: label,
       address,
+      // temp fix https://github.com/home-assistant/core/issues/128370
+      entity_picture2: avatarUrl,
     };
     client.publish(topic, JSON.stringify(payload));
+    client.publish(`${topic}/state`, locationName);
   },
   publishAutoDiscoveryBase() {
     // Last update time sensor

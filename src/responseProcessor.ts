@@ -62,9 +62,13 @@ const processLocation = async (entry: LocationEntry) => {
   }
   const person = cacheData.getContactDisplayNameById(entry.id);
   const label = entry.location.labels?.find(label => label.label)?.label;
+  let avatar = cacheData.getAvatarFileNameById(entry.id);
+  if (avatar) {
+    avatar = `/local/fmf/${avatar}`;
+  }
 
   if (!recordedLastUpdate) {
-    mqtt.publishAutoDiscoveryDeviceTracker(entry.id, person, cacheData.getAvatarBase64UrlById(entry.id));
+    mqtt.publishAutoDiscoveryDeviceTracker(entry.id, person, avatar);
   }
   lastUpdateMap.set(entry.id, entry.location.timestamp);
 
@@ -87,6 +91,7 @@ const processLocation = async (entry: LocationEntry) => {
     entry.location.timestamp,
     label,
     entry.location.address?.formattedAddressLines?.join(", "),
+    avatar,
   );
 }
 
