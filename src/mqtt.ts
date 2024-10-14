@@ -1,5 +1,6 @@
 import mqtt from "mqtt";
 import { createLogg } from "@guiiai/logg";
+import bluebubbles from "./bluebubbles";
 
 const log = createLogg("MQTT").useGlobalConfig();
 
@@ -14,10 +15,19 @@ const client = mqtt.connect(process.env.MQTT_URL, {
 
 client.on("connect", () => {
   log.log("Connected");
+
+  client.subscribe(`${process.env.MQTT_ID}/refresh`);
 });
 
 client.on("error", (err) => {
   log.errorWithError("Error", err);
+});
+
+client.on('message', (topic, message) => {
+  if (topic === `${process.env.MQTT_ID}/refresh`) {
+    log.log("Received refresh command");
+    bluebubbles.requestRefreshLocations();
+  }
 });
 
 const sanitizeId = (notSanitizedId: string) => {
@@ -37,32 +47,46 @@ export default {
     };
     client.publish(topic, JSON.stringify(payload), {retain: true});
   },
-  publishDeviceTrackerState(notSanitizedId: string, lat: number, lon: number, altitude: number, accuracy: number, locationName: string, isInaccurate: boolean, updateTimestamp: number) {
+  publishDeviceTrackerState(notSanitizedId: string, lat: number, lon: number, altitude: number, accuracy: number, locationName: string, isInaccurate: boolean, updateTimestamp: number, label: string, address: string) {
     const id = sanitizeId(notSanitizedId);
     const topic = `${process.env.MQTT_ID}/${id}`;
     const payload = {
       latitude: lat,
       longitude: lon,
-      altitude: altitude,
+      altitude,
       gps_accuracy: accuracy,
       state: locationName,
       inaccurate: isInaccurate,
       timestamp: updateTimestamp,
       time: new Date(updateTimestamp).toLocaleString(),
+      label,
+      address,
     };
     client.publish(topic, JSON.stringify(payload));
   },
   publishAutoDiscoveryBase() {
     // Last update time sensor
-    const topic = `homeassistant/sensor/${process.env.MQTT_ID}_last_update_time/config`;
-    const payload = {
-      name: "FMF Last Update Time",
-      state_topic: `${process.env.MQTT_ID}/last_update_time`,
-      device_class: "timestamp",
-      value_template: "{{ as_datetime(value) }}",
-      unique_id: `${process.env.MQTT_ID}_last_update_time`,
-    };
-    client.publish(topic, JSON.stringify(payload), {retain: true});
+    {
+      const topic = `homeassistant/sensor/${process.env.MQTT_ID}_last_update_time/config`;
+      const payload = {
+        name: "FMF Last Update Time",
+        state_topic: `${process.env.MQTT_ID}/last_update_time`,
+        device_class: "timestamp",
+        value_template: "{{ as_datetime(value) }}",
+        unique_id: `${process.env.MQTT_ID}_last_update_time`,
+      };
+      client.publish(topic, JSON.stringify(payload), {retain: true});
+    }
+    // Refresh button
+    {
+      const topic = `homeassistant/button/${process.env.MQTT_ID}_refresh/config`;
+      const payload = {
+        name: "FMF Refresh",
+        command_topic: `${process.env.MQTT_ID}/refresh`,
+        unique_id: `${process.env.MQTT_ID}_refresh`,
+      };
+      client.publish(topic, JSON.stringify(payload), {retain: true});
+    }
   },
   publishLastUpdateTime() {
     const topic = `${process.env.MQTT_ID}/last_update_time`;

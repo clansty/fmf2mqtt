@@ -84,7 +84,9 @@ const processLocation = async (entry: LocationEntry) => {
     entry.location.horizontalAccuracy,
     label || entry.location.address?.formattedAddressLines?.join(", ") || "Unknown",
     entry.location.isInaccurate,
-    entry.location.timestamp
+    entry.location.timestamp,
+    label,
+    entry.location.address?.formattedAddressLines?.join(", "),
   );
 }
 
