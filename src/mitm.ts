@@ -10,11 +10,6 @@ proxy.onError(function (ctx, err) {
 });
 
 proxy.onResponse(function (ctx, callback) {
-  log.withFields({
-    host: ctx.clientToProxyRequest.headers.host,
-    url: ctx.clientToProxyRequest.url,
-    statusCode: ctx.serverToProxyResponse.statusCode,
-  }).debug('RESPONSE END');
   if (ctx.clientToProxyRequest.headers.host.endsWith("fmfmobile.icloud.com") && ctx.clientToProxyRequest.url.endsWith("refreshClient")) {
     let body = '';
     ctx.onResponseData((ctx, chunk, callback) => {

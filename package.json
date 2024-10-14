@@ -14,11 +14,9 @@
   },
   "devDependencies": {
     "@guiiai/logg": "^1.0.5",
-    "@types/image-to-base64": "^2.1.2",
     "@types/node": "^22.7.5",
     "@types/node-cron": "^3.0.11",
     "http-mitm-proxy": "^1.1.0",
-    "image-to-base64": "^2.2.0",
     "mqtt": "^5.10.1",
     "node-cron": "^3.0.3",
     "tsx": "^4.19.1",

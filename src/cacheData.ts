@@ -42,9 +42,15 @@ interface LabelledLocation {
 
 const file = fs.readFileSync("data/FriendCacheData.data", "utf-8");
 const cacheData: CacheData = JSON.parse(file);
+const avatarsFileList = fs.readdirSync("data/avatars");
 
 export default {
   getContactDisplayNameById(id: string): string {
     return cacheData.contacts[id]?.displayName;
+  },
+  getAvatarBase64UrlById(id: string): string {
+    const avatarFile = avatarsFileList.find((file) => file.includes(id) && file.endsWith("66.0.png"));
+    if (avatarFile)
+      return `data:image/png;base64,${fs.readFileSync(`data/avatars/${avatarFile}`, "base64")}`;
   }
 }

@@ -64,7 +64,7 @@ const processLocation = async (entry: LocationEntry) => {
   const label = entry.location.labels?.find(label => label.label)?.label;
 
   if (!recordedLastUpdate) {
-    mqtt.publishAutoDiscoveryDeviceTracker(entry.id, person);
+    mqtt.publishAutoDiscoveryDeviceTracker(entry.id, person, cacheData.getAvatarBase64UrlById(entry.id));
   }
   lastUpdateMap.set(entry.id, entry.location.timestamp);
 

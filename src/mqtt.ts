@@ -26,13 +26,14 @@ const sanitizeId = (notSanitizedId: string) => {
 }
 
 export default {
-  publishAutoDiscoveryDeviceTracker(notSanitizedId: string, displayName: string) {
+  publishAutoDiscoveryDeviceTracker(notSanitizedId: string, displayName: string, pictureUrl?: string) {
     const id = sanitizeId(notSanitizedId);
     const topic = `homeassistant/device_tracker/${process.env.MQTT_ID}_${id}/config`;
     const payload = {
       name: displayName,
       json_attributes_topic: `${process.env.MQTT_ID}/${id}`,
       unique_id: `${process.env.MQTT_ID}_${id}`,
+      entity_picture: pictureUrl,
     };
     client.publish(topic, JSON.stringify(payload), {retain: true});
   },
