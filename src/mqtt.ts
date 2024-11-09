@@ -43,7 +43,8 @@ export default {
       name: displayName,
       json_attributes_topic: `${process.env.MQTT_ID}/${id}`,
       unique_id: `${process.env.MQTT_ID}_${id}`,
-      entity_picture: pictureUrl,
+      // invalid url for dictionary value @ data['entity_picture']'
+      // entity_picture: pictureUrl,
       state_topic: `${process.env.MQTT_ID}/${id}/state`,
       payload_home: '_$!<home>!$_',
       device: {
