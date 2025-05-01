@@ -72,7 +72,7 @@ export default {
       entity_picture2: avatarUrl,
     };
     client.publish(topic, JSON.stringify(payload));
-    client.publish(`${topic}/state`, locationName);
+    client.publish(`${topic}/state`, locationName, {retain: true});
   },
   publishAutoDiscoveryBase() {
     // Last update time sensor
@@ -101,6 +101,6 @@ export default {
   publishLastUpdateTime() {
     const topic = `${process.env.MQTT_ID}/last_update_time`;
     const payload = new Date().toISOString();
-    client.publish(topic, payload);
+    client.publish(topic, payload, {retain: true});
   },
 }
